@@ -9,28 +9,29 @@
 #import <Foundation/Foundation.h>
 
 long long llgcd(long long a, long long b);
-void llSwap(long long a*, long long b*);
+void llSwap(long long *a, long long *b);
 BOOL calculate(long long a, long long b, long long c, long long *xReturn, long long *yReturn, long long *gcdReturn);
+void evaluate(int n1,int n2, long long a, long long b, long long c, long long X, long long Y, long long gcd);
 
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         long long a, b, c, x, y, gcd;
         
-        a = 2;
-        b = 4;
-        c = 8;
+        a = 139;
+        b = 64;
+        c = -7;
+        
+        NSLog(@"%lldx + %lldy = %lld",a,b,c);
         
         if (calculate(a, b, c, &x, &y, &gcd)) {
-            printf("x:%lld y:%lld gcd:%lld",x,y,gcd);
+            NSLog(@"x:%lld y:%lld gcd:%lld",x,y,gcd);
             
             long long a0 =a;
             long long b0 =b;
-            long long c0 =c;
             
             a=llabs(a);
             b=llabs(b);
-            c=llabs(c);
             
             if (a0>0 && b0>0) {
                 NSLog(@"%@", [NSString stringWithFormat:@"x = %lld - %lldn",x*(c/gcd),b/gcd]);
@@ -52,11 +53,11 @@ int main(int argc, const char * argv[]) {
         } else {
             printf("No Solutions");
         }
+        
+        evaluate(-8, 8, a, b, c, x, y, gcd);
     }
     return 0;
 }
-
-
 
 BOOL calculate(long long a, long long b, long long c, long long *xReturn, long long *yReturn, long long *gcdReturn) {
     
@@ -88,9 +89,9 @@ BOOL calculate(long long a, long long b, long long c, long long *xReturn, long l
     //----------------initializer
     long long r=x%y;
     if(r==0){
-        gcd = y;
-        y=1;
-        x=0;
+        *xReturn = swapped? 1 : 0;
+        *yReturn = swapped? 0 : 1;
+        *gcdReturn = y;
         return YES;
     }
     
@@ -153,10 +154,31 @@ BOOL calculate(long long a, long long b, long long c, long long *xReturn, long l
 //13*17*19*23=96577
 //1300000
 
-void llSwap(long long a*, long long b*) {
-    long long x = a;
-    *b = *a;
-    *a = x;
+void evaluate(int n1,int n2, long long a, long long b, long long c, long long X, long long Y, long long gcd){
+
+    int from=n1;
+    int to=n2;
+    
+    long long x;
+    long long y;
+    
+    NSMutableString* stringCalc= [[NSMutableString alloc] init];
+    
+    for(int n=from;n<=to;n++){
+        x = (X*c-b*n)/gcd;
+        y = (Y*c+a*n)/gcd;
+        //                                a     x       b   y      a*x+b*y
+        [stringCalc appendFormat:@"n=%i  %lld(%lld) + %lld(%lld) = %lld\n",n,a,x,b,y,a*x+b*y];
+        //printf("a(%lld) + b(%lld) = %lld\n",x,y,c);
+    }
+    NSLog(@"%@", stringCalc);
+}
+
+
+void llSwap(long long * a, long long *b) {
+    long long x = *a;
+    *a = *b;
+    *b = x;
 }
 
 long long llgcd(long long a, long long b) {
