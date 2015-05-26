@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+int sign(long long x);
 long long llgcd(long long a, long long b);
 void llSwap(long long *a, long long *b);
 BOOL calculate(long long a, long long b, long long c, long long *xReturn, long long *yReturn, long long *gcdReturn);
@@ -17,44 +18,35 @@ void evaluate(int n1,int n2, long long a, long long b, long long c, long long X,
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         long long a, b, c, x, y, gcd;
-        
-        a = 139;
-        b = 64;
+
+        a = 64;
+        b = -139;
         c = -7;
         
         NSLog(@"%lldx + %lldy = %lld",a,b,c);
-        
-        if (calculate(a, b, c, &x, &y, &gcd)) {
-            NSLog(@"x:%lld y:%lld gcd:%lld",x,y,gcd);
-            
-            long long a0 =a;
-            long long b0 =b;
-            
-            a=llabs(a);
-            b=llabs(b);
-            
-            if (a0>0 && b0>0) {
-                NSLog(@"%@", [NSString stringWithFormat:@"x = %lld - %lldn",x*(c/gcd),b/gcd]);
-                NSLog(@"%@", [NSString stringWithFormat:@"y = %lld + %lldn",y*(c/gcd),a/gcd]);
-                NSLog(@"%@", [NSString stringWithFormat:@"GCD(%lld,%lld)=%lld",a,b,gcd]);
-            } else if (a0>0 && b0<0) {
-                NSLog(@"%@", [NSString stringWithFormat:@"x = %lld + %lldn",x*(c/gcd),b/gcd]);
-                NSLog(@"%@", [NSString stringWithFormat:@"y = %lld + %lldn",y*(c/gcd),a/gcd]);
-                NSLog(@"%@", [NSString stringWithFormat:@"GCD(%lld,%lld)=%lld",a,b,gcd]);
-            } else if (a0<0 && b0>0) {
-                NSLog(@"%@", [NSString stringWithFormat:@"x = %lld - %lldn",x*(c/gcd),b/gcd]);
-                NSLog(@"%@", [NSString stringWithFormat:@"y = %lld - %lldn",y*(c/gcd),a/gcd]);
-                NSLog(@"%@", [NSString stringWithFormat:@"GCD(%lld,%lld)=%lld",a,b,gcd]);
-            } else {
-                NSLog(@"%@", [NSString stringWithFormat:@"x = %lld + %lldn",x*(c/gcd),b/gcd]);
-                NSLog(@"%@", [NSString stringWithFormat:@"y = %lld - %lldn",y*(c/gcd),a/gcd]);
-                NSLog(@"%@", [NSString stringWithFormat:@"GCD(%lld,%lld)=%lld",a,b,gcd]);
+
+        if (calculate(llabs(a), llabs(b), c, &x, &y, &gcd)) {
+
+            if(sign(a) != sign(b)) {
+                y = -y;
             }
+
+            if(a<0) {
+                c =-c;
+            }
+
+            NSLog(@"x:%lld y:%lld gcd:%lld",x,y,gcd);
+
+            NSLog(@"%@", [NSString stringWithFormat:@"x = (%lld) - (%lld)n",x*(c/gcd),b/gcd]);
+            NSLog(@"%@", [NSString stringWithFormat:@"y = (%lld) + (%lld)n",y*(c/gcd),a/gcd]);
+            NSLog(@"%@", [NSString stringWithFormat:@"GCD(%lld,%lld) = %lld",a,b,gcd]);
+
+
+
+            evaluate(-4, 4, a, b, c, x, y, gcd);
         } else {
             printf("No Solutions");
         }
-        
-        evaluate(-8, 8, a, b, c, x, y, gcd);
     }
     return 0;
 }
@@ -171,7 +163,7 @@ void evaluate(int n1,int n2, long long a, long long b, long long c, long long X,
         [stringCalc appendFormat:@"n=%i  %lld(%lld) + %lld(%lld) = %lld\n",n,a,x,b,y,a*x+b*y];
         //printf("a(%lld) + b(%lld) = %lld\n",x,y,c);
     }
-    NSLog(@"%@", stringCalc);
+    NSLog(@"\n%@", stringCalc);
 }
 
 
@@ -187,4 +179,8 @@ long long llgcd(long long a, long long b) {
         c = a; a = b%a;  b = c;
     }
     return b < 0 ? -b : b;
+}
+
+int sign(long long x) {
+    return (x > 0) - (x < 0);
 }
